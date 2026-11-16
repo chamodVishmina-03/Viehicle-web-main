@@ -6,6 +6,8 @@ import { PageHeader } from "../components/common/PageHeader"
 import { InputField } from "../components/forms/InputField"
 import { Button } from "../components/common/Button"
 import { errMsg } from "../lib/constants"
+import { compressImage } from "../lib/image"
+
 
 export const AddVehicle: React.FC = () => {
   const navigate = useNavigate()
@@ -26,12 +28,13 @@ export const AddVehicle: React.FC = () => {
   const set = (k: string) => (e: React.ChangeEvent<any>) =>
     setForm({ ...form, [k]: e.target.value })
 
-  const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]
     if (!f) return
     if (!f.type.startsWith("image/")) return notify("Please select an image")
-    setImage(f)
-    setPreview(URL.createObjectURL(f))
+    const small = await compressImage(f)
+    setImage(small)
+    setPreview(URL.createObjectURL(small))
   }
 
   const submit = async () => {
